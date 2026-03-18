@@ -6,13 +6,12 @@ const url = require('url');
 const myServer = http.createServer((req, res) => {
     if (req.url === '/favicon.ico') return null;
     console.log('Request received');
-    const log = `${Date.now()} ${req.url} New Request received \n`;
+    const log = `${Date.now()} ${req.method} ${req.url} New Request received \n`;
     const myUrl = url.parse(req.url, true);
-    console.log(myUrl);
     fs.appendFile('./log.txt', log, (err, data) => {
         switch (myUrl.pathname) {
             case '/':
-                res.end('Hello from Homepage');
+                if (req.method === 'GET') res.end('Hello from Homepage');
                 break;
             case '/about':
                 const username = myUrl.query.username;
@@ -20,6 +19,13 @@ const myServer = http.createServer((req, res) => {
                 break;
             case '/contact':
                 res.end('Hello from Contact Page');
+                break;
+            case '/signup':
+                if (req.method === 'GET') {
+                    res.end('This is the signup form')
+                } else if (req.method === 'POST') {
+                    res.end('Form submitted successfully')
+                };
                 break;
             default:
                 res.end('<h1>404 - Page Not Found</h1>');
